@@ -3,13 +3,14 @@ import pandas as pd
 import os,glob
 import numpy as np
 from sklearn import svm,metrics
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,cross_val_score
 from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.ensemble import RandomForestClassifier,AdaBoostClassifier,ExtraTreesClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.gaussian_process.kernels import ConstantKernel, RBF,RationalQuadratic
 import matplotlib.pyplot as plt
 from sklearn.inspection import permutation_importance
+
 os.environ['PROJ_LIB'] = r'C:\Users\361045\Anaconda3\envs\pygeo\Library\share\proj'
 os.environ['GDAL_DATA'] = r'C:\Users\361045\Anaconda3\envs\pygeo\Library\share'
 
@@ -25,7 +26,8 @@ def MLClassify(wd,outras,trainCSV,method='ERF'):
     outras : string
         path and name of output prediction raster
     method : string, optional
-        Classification method for prediction. 'ERF' = Extra random forest; 'SVM' = support vector machine; 'GPC' = gaussian processes
+        Classification method for prediction. 'ERF' = Extra random forest; 'SVM' = support vector machine; 
+        'GPC' = gaussian processes; 'ADA' = adaptive boost 
         The default is 'ERF'.
     trainCSV: string
         Full path to csv file with training data. This file will have data from each of the rasters in the wd
@@ -176,7 +178,12 @@ def MLClassify(wd,outras,trainCSV,method='ERF'):
     print('GPC accuracy: ',metrics.accuracy_score(y_test,gpc_pred))
     
     
-    
+    ##adaptive boost classifier
+    ada= AdaBoostClassifier(n_estimators=100)
+    ada.fit(X_train,y_train)
+    ada_pred = ada.predict(X_test)
+    adascores = cross_val_score(ada, X_train, y_train, cv=5)
+    print('ADA accuracy: ',adascores.mean())
     
     '''
     Now let's use the model to predict PF using the full raster dataset
@@ -188,6 +195,8 @@ def MLClassify(wd,outras,trainCSV,method='ERF'):
         classifier = clf_svm
     elif method == 'GPC':
         classifier = gpc
+    elif method == 'ADA':
+        classifier = ada
         
     y_full_pred=classifier.predict(X_FULL)
     
@@ -208,9 +217,9 @@ def MLClassify(wd,outras,trainCSV,method='ERF'):
     
     
 MLClassify(r'C:\Users\361045\Documents\projects\ngee\machineLearningData\t47\rasters_3m',
-           './PF_predictions/PF_predictionTEST.tif',
+           './PF_predictions/PF_prediction.tif',
            r'C:\Users\361045\Documents\projects\ngee\machineLearningData\t47\rasters_3m\ClassifiedValuesWithParams.csv',
-           'GPC')
+           'ADA')
 
 
 
