@@ -20,14 +20,15 @@ def MLClassify(wd,outras,trainCSV,method='ERF'):
 
     Parameters
     ----------
-    wd : TYPE
-        DESCRIPTION.
-    outras : TYPE
-        DESCRIPTION.
-    method : TYPE, optional
-        DESCRIPTION. The default is 'ERF'.
-    trainCSV: TYPE,
-        DESCRIPTION.
+    wd : string
+        Full path to directory where input rasters are stores
+    outras : string
+        path and name of output prediction raster
+    method : string, optional
+        Classification method for prediction. 'ERF' = Extra random forest; 'SVM' = support vector machine; 'GPC' = gaussian processes
+        The default is 'ERF'.
+    trainCSV: string
+        Full path to csv file with training data. This file will have data from each of the rasters in the wd
 
     Returns
     -------
