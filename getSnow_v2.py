@@ -2,15 +2,27 @@ import numpy as np
 import os,glob
 from osgeo import gdal
 import ogr, osr
+import matplotlib.pyplot as plt
+from scipy.signal import argrelmin
+import matplotlib.pyplot as plt
+from scipy.stats.kde import gaussian_kde
+
+
 ##Setting environmental variables for GDAL--might not be necessary for some users
 ##These lines can probably be commented out on most machines
 os.environ['PROJ_LIB'] = r'C:\Users\361045\Anaconda3\envs\pygeo\Library\share\proj'
 os.environ['GDAL_DATA'] = r'C:\Users\361045\Anaconda3\envs\pygeo\Library\share'
-import matplotlib.pyplot as plt
-from scipy.signal import argrelmin,argrelmax,find_peaks
-import matplotlib.pyplot as plt
-from scipy.stats.kde import gaussian_kde
-from scipy.ndimage.filters import convolve1d
+
+'''
+getsnow_v2.py is code to generate a binary raster of snow distribution from an RGB image.
+It has been tested on imagery from Maxar and Planet.
+The algorithm uses a threshold reflectance value in the blue band that is set as the first local minimum of the
+reflectance distribution that is greater than the mean value (this assumes a bimodal distribution of blue
+reflectance values.) Because reflectance values are noisy, we first have to smooth the data using a convolution filter.
+'''
+
+
+
 
 def smooth(x,window_len=11,window='hanning'):
     """smooth the data using a window with requested size.
@@ -25,12 +37,10 @@ def smooth(x,window_len=11,window='hanning'):
         window_len: the dimension of the smoothing window; should be an odd integer
         window: the type of window from 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'
             flat window will produce a moving average smoothing.
-
     output:
         the smoothed signal
         
     example:
-
     t=linspace(-2,2,0.1)
     x=sin(t)+randn(len(t))*0.1
     y=smooth(x)
@@ -39,9 +49,6 @@ def smooth(x,window_len=11,window='hanning'):
     
     numpy.hanning, numpy.hamming, numpy.bartlett, numpy.blackman, numpy.convolve
     scipy.signal.lfilter
- 
-    TODO: the window parameter could be the window itself if an array instead of a string
-    NOTE: length(output) != length(input), to correct this: return y[(window_len/2-1):-(window_len/2)] instead of just y.
     """
 
     if x.ndim != 1:
@@ -71,6 +78,20 @@ def smooth(x,window_len=11,window='hanning'):
 
 
 def getSnowBlue (wd,inras,outras):
+    '''
+     Parameters
+    ----------
+    wd : string
+        Full path to directory where input rasters are stores
+    inras : string
+        path and name of input RGB multispectral image
+    outras : string
+        path and name of output prediction raster
+    
+    Returns
+    -------
+    None.
+    '''
     #Change to directory where images are located
     os.chdir(wd)
     
@@ -160,6 +181,11 @@ def getSnowBlue (wd,inras,outras):
     else:
         print('this is a single band raster and probably not a true color image--moving on to next raster')
 
+
+#####################
+##RUN FUNCTION#######
+#####################
+
 #Set working directory
 wd=r'C:\Users\361045\Desktop\snowTest'
 #Get list of tif files in working directory
@@ -170,9 +196,3 @@ for f in flist: ##we're going to loop through the tifs in the directory and calc
     #generate path for output file...here we are just throwing the new snow rasters in the working directory
     outras=f[:-4]+'_snow.tif'
     getSnowBlue(wd,inras,outras)
-
-
-
-
-
-
