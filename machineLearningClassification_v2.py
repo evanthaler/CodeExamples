@@ -203,7 +203,11 @@ def MLClassify(wd,outras,trainCSV,method='ERF'):
     
     '''
     Now we can write the prediction raster to a new tif
+    First we need to fill in the places in y_full_pred where we removed nans from the original input dems, which were compiled
+    into df_fullData. we'll just be adding NaNs where the NaNs were in the original input data.
     '''
+    
+    
     def add_nans(x,y):
         lst = []
         index = 0
@@ -231,14 +235,30 @@ def MLClassify(wd,outras,trainCSV,method='ERF'):
     
     
 MLClassify(r'C:\Users\361045\Documents\projects\ngee\machineLearningData\t47\rasters_3m',
-           './PF_predictions/PF_prediction.tif',
-           r'C:\Users\361045\Documents\projects\ngee\machineLearningData\t47\rasters_3m\ClassifiedValuesWithParams2.csv',
+           r'C:\Users\361045\Documents\projects\ngee\machineLearningData\t47\rasters_3m\PF_predictions\PF_predictions.tif',
+           r'C:\Users\361045\Documents\projects\ngee\machineLearningData\t47\rasters_3m\ClassifiedValuesWithParams.csv',
            'ERF')
 
 
+'''
+ MLClassify(wd,outras,trainCSV,method='ERF')
 
-# wd = r'C:\Users\361045\Documents\projects\ngee\machineLearningData\t47\rasters_3m'
-# outras = './PF_predictions/PF_prediction.tif'
-# trainCSV = r'C:\Users\361045\Documents\projects\ngee\machineLearningData\t47\rasters_3m\ClassifiedValuesWithParams.csv'
-# method='ERF'
+ Parameters
+ ----------
+ wd : string
+     Full path to directory where input rasters are stored
+ outras : string
+     path and name of output prediction raster
+ method : string, optional
+     Classification method for prediction. 'ERF' = Extra random forest; 'SVM' = support vector machine; 
+     'GPC' = gaussian processes; 'ADA' = adaptive boost 
+     The default is 'ERF'.
+ trainCSV: string
+     Full path to csv file with training data. This file will have data from each of the rasters in the wd
+
+ Returns
+ -------
+ None.
+
+'''
 
