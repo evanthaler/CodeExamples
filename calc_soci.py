@@ -40,7 +40,7 @@ def get_soci(wd,inras,outras):
         #read band values into array
         blue = np.array(blue.ReadAsArray()).astype(float)
         green =  np.array(green.ReadAsArray()).astype(float)
-        red =  = np.array(red.ReadAsArray()).astype(float)
+        red =  np.array(red.ReadAsArray()).astype(float)
  
 
         soci = blue/(red*green)
@@ -75,7 +75,7 @@ def get_soci(wd,inras,outras):
         outRaster.SetProjection(tif.GetProjection())
         #outband = outRaster.GetRasterBand(1)
         outband.SetNoDataValue(0)
-        outband.WriteArray(snowBLUE)
+        outband.WriteArray(soci)
         
         
         outband.FlushCache()
