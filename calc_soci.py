@@ -39,7 +39,7 @@ def get_soci(wd,inras,outras):
             nodat=0.
         #read band values into array
         blue = np.array(blue.ReadAsArray()).astype(float)
-        green =  = np.array(green.ReadAsArray()).astype(float)
+        green =  np.array(green.ReadAsArray()).astype(float)
         red =  = np.array(red.ReadAsArray()).astype(float)
  
 
@@ -93,4 +93,4 @@ for f in flist: ##we're going to loop through the tifs in the directory and calc
     inras=f
     #generate path for output file...here we are just throwing the new snow rasters in the working directory
     outras=f[:-4]+'soci.tif'
-    getSnowBlue(wd,inras,outras)
+    get_soci(wd,inras,outras)
